@@ -101,8 +101,14 @@ enum {
     // This is per (input!) UTXO flag
     SCRIPT_UTXO_AFTER_GENESIS = (1U << 19),
 
+    // Is script malleable
+    SCRIPT_MALLEABLE = (1U << 20),
+
+    // Is forkid sighash present
+    SCRIPT_FORKID_SIG_PRESENT = (1U << 21), 
+
     // Not actual flag. Used for marking largest flag value.
-    SCRIPT_FLAG_LAST = (1U << 20)
-};
+    SCRIPT_FLAG_LAST = (1U << 22)
+}
 
 #endif // BITCOIN_SCRIPT_SCRIPTFLAGS_H

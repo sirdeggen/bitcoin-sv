@@ -441,7 +441,7 @@ std::optional<bool> EvalScript(
 
             if (fExec && 0 <= opcode && opcode <= OP_PUSHDATA4) {
                 if (fRequireMinimal &&
-                    !CheckMinimalPush(vchPushValue, opcode)) {
+                    !CheckMinimalPush(vchPushValue, opcode) && !(flags & SCRIPT_FORKID_SIG_PRESENT)) {
                     return set_error(serror, SCRIPT_ERR_MINIMALDATA);
                 }
                 stack.push_back(vchPushValue);
@@ -1944,6 +1944,12 @@ bool TransactionSignatureChecker::CheckSig(
         return false;
     }
     SigHashType sigHashType = GetHashType(vchSig);
+    if (sigHashType.hasForkId()) {
+        if (flags & SCRIPT_MALLEABLE) {
+            return false;
+        }
+        flags |= SCRIPT_FORKID_SIG_PRESENT;
+    }
     vchSig.pop_back();
 
     uint256 sighash = SignatureHash(scriptCode, *txTo, nIn, sigHashType, amount,
