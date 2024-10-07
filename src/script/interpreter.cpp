@@ -1944,6 +1944,12 @@ bool TransactionSignatureChecker::CheckSig(
         return false;
     }
     SigHashType sigHashType = GetHashType(vchSig);
+    if (sigHashType.hasForkId()) {
+        if (flags & SCRIPT_MALLEABLE) {
+            return false;
+        }
+        flags |= SCRIPT_FORKID_SIG_PRESENT;
+    }
     vchSig.pop_back();
 
     uint256 sighash = SignatureHash(scriptCode, *txTo, nIn, sigHashType, amount,
